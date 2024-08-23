@@ -1,0 +1,13 @@
+.average-sessions-chart {
+  background-color: #FF0000;
+  border-radius: 5px;
+  padding: 1rem;
+  position: relative;
+}
+
+.average-sessions-chart h3 {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
