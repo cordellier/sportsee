@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { fetchUserData, fetchUserActivity, fetchUserAverageSessions, fetchUserPerformance } from '../services/api';
 import ActivityChart from './ActivityChart';
 import AverageSessionsChart from './AverageSessionsChart';
@@ -12,6 +12,8 @@ function Dashboard() {
   const [userActivity, setUserActivity] = useState(null);
   const [userAverageSessions, setUserAverageSessions] = useState(null);
   const [userPerformance, setUserPerformance] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const userId = 12;
@@ -22,26 +24,31 @@ function Dashboard() {
         const activity = await fetchUserActivity(userId);
         const averageSessions = await fetchUserAverageSessions(userId);
         const performance = await fetchUserPerformance(userId);
-        
+
         setUserData(data);
         setUserActivity(activity);
         setUserAverageSessions(averageSessions);
         setUserPerformance(performance);
       } catch (error) {
+        setError('Error fetching data');
         console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
   }, []);
 
-  if (!userData) return <div>Loading...</div>;
+  if (loading) return <div className="loading">Loading...</div>;
+  if (error) return <div className="error">{error}</div>;
+  if (!userData) return <div className="error">No data available</div>;
 
   return (
     <div className="dashboard">
       <header className="dashboard-header">
         <h1>Bonjour <span className="name">{userData.userInfos.firstName}</span></h1>
-        <p>Félicitation ! Vous avez explosé vos objectifs hier 👏</p>
+        <p>Félicitations ! Vous avez explosé vos objectifs hier 👏</p>
       </header>
       
       <div className="dashboard-content">

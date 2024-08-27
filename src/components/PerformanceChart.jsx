@@ -1,17 +1,30 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } from 'recharts';
+import PropTypes from 'prop-types';
 import '../styles/PerformanceChart.css';
+import { fetchUserPerformance } from '../services/api'; // Importer la fonction API
 
-const data = [
-  { subject: 'Intensité', A: 120, fullMark: 150 },
-  { subject: 'Vitesse', A: 98, fullMark: 150 },
-  { subject: 'Force', A: 86, fullMark: 150 },
-  { subject: 'Endurance', A: 99, fullMark: 150 },
-  { subject: 'Energie', A: 85, fullMark: 150 },
-  { subject: 'Cardio', A: 110, fullMark: 150 },
-];
+function PerformanceChart({ userId }) {
+  const [data, setData] = useState([]);
 
-function PerformanceChart() {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetchUserPerformance(userId);
+        const formattedData = response.map((item) => ({
+          subject: item.kind,
+          A: item.value,
+          fullMark: 150,
+        }));
+        setData(formattedData);
+      } catch (error) {
+        console.error('Error fetching performance data:', error);
+      }
+    };
+
+    fetchData();
+  }, [userId]);
+
   return (
     <div className="performance-chart">
       <ResponsiveContainer width="100%" height="100%">
@@ -24,5 +37,10 @@ function PerformanceChart() {
     </div>
   );
 }
+
+// Validation des PropTypes
+PerformanceChart.propTypes = {
+  userId: PropTypes.number.isRequired, // Ajoutez une validation PropTypes pour l'ID utilisateur
+};
 
 export default PerformanceChart;

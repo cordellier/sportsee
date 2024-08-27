@@ -1,7 +1,7 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 import '../styles/NutritionCard.css';
 
-// Import the icons as images
+// Import des icônes
 import caloriesIcon from '../assets/calories-icon.png';
 import proteinesIcon from '../assets/proteines-icon.png'; 
 import glucidesIcon from '../assets/glucides-icon.png'; 
@@ -15,9 +15,11 @@ const iconMap = {
 };
 
 function NutritionCard({ type, value, unit }) {
+  const iconSrc = iconMap[type] || 'path/to/default-icon.png'; // Remplacez par un chemin valide pour un icône par défaut
+
   return (
     <div className={`nutrition-card ${type}`}>
-      <img src={iconMap[type]} alt={`${type} icon`} className="nutrition-icon" />
+      <img src={iconSrc} alt={`${type} icon`} className="nutrition-icon" />
       <div className="nutrition-info">
         <p className="nutrition-value">{value}{unit}</p>
         <p className="nutrition-type">{type}</p>
@@ -25,5 +27,12 @@ function NutritionCard({ type, value, unit }) {
     </div>
   );
 }
+
+// Validation des PropTypes
+NutritionCard.propTypes = {
+  type: PropTypes.oneOf(['calories', 'proteines', 'glucides', 'lipides']).isRequired,
+  value: PropTypes.number.isRequired,
+  unit: PropTypes.string.isRequired,
+};
 
 export default NutritionCard;

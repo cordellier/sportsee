@@ -1,18 +1,24 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import PropTypes from 'prop-types';
 import '../styles/AverageSessionsChart.css';
+import { fetchUserAverageSessions } from '../services/api';
 
-const data = [
-  { day: 'L', sessionLength: 30 },
-  { day: 'M', sessionLength: 23 },
-  { day: 'M', sessionLength: 45 },
-  { day: 'J', sessionLength: 50 },
-  { day: 'V', sessionLength: 0 },
-  { day: 'S', sessionLength: 60 },
-  { day: 'D', sessionLength: 50 },
-];
+function AverageSessionsChart({ userId }) {
+  const [data, setData] = useState([]);
 
-function AverageSessionsChart() {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetchUserAverageSessions(userId);
+        setData(response.sessions || []);
+      } catch (error) {
+        console.error('Error fetching average sessions data:', error);
+      }
+    };
+    fetchData();
+  }, [userId]);
+
   return (
     <div className="average-sessions-chart">
       <h3>Durée moyenne des sessions</h3>
@@ -27,5 +33,10 @@ function AverageSessionsChart() {
     </div>
   );
 }
+
+// Validation des PropTypes
+AverageSessionsChart.propTypes = {
+  userId: PropTypes.number.isRequired,
+};
 
 export default AverageSessionsChart;
