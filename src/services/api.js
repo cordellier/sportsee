@@ -4,7 +4,7 @@ const API_BASE_URL = "http://localhost:3000";
 
 export const fetchUserData = async (userId) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/users/${userId}`);
+    const response = await axios.get(`${API_BASE_URL}/user/${userId}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching user data:", error);
@@ -14,9 +14,7 @@ export const fetchUserData = async (userId) => {
 
 export const fetchUserActivity = async (userId) => {
   try {
-    const response = await axios.get(
-      `${API_BASE_URL}/activity?userId=${userId}`
-    );
+    const response = await axios.get(`${API_BASE_URL}/user/${userId}/activity`);
     return response.data;
   } catch (error) {
     console.error("Error fetching user activity:", error);
@@ -27,7 +25,7 @@ export const fetchUserActivity = async (userId) => {
 export const fetchUserAverageSessions = async (userId) => {
   try {
     const response = await axios.get(
-      `${API_BASE_URL}/average-sessions?userId=${userId}`
+      `${API_BASE_URL}/user/${userId}/average-sessions`
     );
     return response.data;
   } catch (error) {
@@ -39,7 +37,7 @@ export const fetchUserAverageSessions = async (userId) => {
 export const fetchUserPerformance = async (userId) => {
   try {
     const response = await axios.get(
-      `${API_BASE_URL}/performance?userId=${userId}`
+      `${API_BASE_URL}/user/${userId}/performance`
     );
     return response.data;
   } catch (error) {

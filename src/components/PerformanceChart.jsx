@@ -1,46 +1,35 @@
-import { useState, useEffect } from 'react';
-import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } from 'recharts';
+import React from 'react';
 import PropTypes from 'prop-types';
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } from 'recharts';
 import '../styles/PerformanceChart.css';
-import { fetchUserPerformance } from '../services/api'; // Importer la fonction API
 
-function PerformanceChart({ userId }) {
-  const [data, setData] = useState([]);
+function PerformanceChart({ data, kind }) {
+  if (!data || !kind) return <div>Aucune donnée de performance disponible</div>;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetchUserPerformance(userId);
-        const formattedData = response.map((item) => ({
-          subject: item.kind,
-          A: item.value,
-          fullMark: 150,
-        }));
-        setData(formattedData);
-      } catch (error) {
-        console.error('Error fetching performance data:', error);
-      }
-    };
-
-    fetchData();
-  }, [userId]);
+  const formattedData = data.map((item) => ({
+    subject: kind[item.kind],
+    A: item.value,
+  }));
 
   return (
     <div className="performance-chart">
-      <ResponsiveContainer width="100%" height="100%">
-        <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
-          <PolarGrid />
+      <ResponsiveContainer width="100%" height={250}>
+        <RadarChart cx="50%" cy="50%" outerRadius="70%" data={formattedData}>
+          <PolarGrid gridType="polygon" />
           <PolarAngleAxis dataKey="subject" tick={{ fill: 'white', fontSize: 12 }} />
-          <Radar name="Performance" dataKey="A" stroke="#FF0101" fill="#FF0101" fillOpacity={0.7} />
+          <Radar name="Performance" dataKey="A" fill="#FF0101" fillOpacity={0.7} />
         </RadarChart>
       </ResponsiveContainer>
     </div>
   );
 }
 
-// Validation des PropTypes
 PerformanceChart.propTypes = {
-  userId: PropTypes.number.isRequired, // Ajoutez une validation PropTypes pour l'ID utilisateur
+  data: PropTypes.arrayOf(PropTypes.shape({
+    kind: PropTypes.number,
+    value: PropTypes.number
+  })),
+  kind: PropTypes.objectOf(PropTypes.string)
 };
 
 export default PerformanceChart;

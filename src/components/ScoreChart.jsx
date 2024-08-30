@@ -1,66 +1,43 @@
-import { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { RadialBarChart, RadialBar, ResponsiveContainer } from 'recharts';
+import React from 'react';
+import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import '../styles/ScoreChart.css';
-import { fetchUserData } from '../services/api'; 
 
-function ScoreChart({ userId }) {
-  const [score, setScore] = useState(0);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await fetchUserData(userId);
-        setScore(data.todayScore * 100); 
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    };
-
-    fetchData();
-  }, [userId]);
-
-  const chartData = [
-    {
-      name: 'score',
-      value: score,
-      fill: '#FF0000',
-    },
+function ScoreChart({ score }) {
+  const data = [
+    { name: 'Score', value: score },
+    { name: 'Total', value: 1 - score }
   ];
 
   return (
     <div className="score-chart">
-      <h3>Score</h3>
+      <h2>Score</h2>
       <ResponsiveContainer width="100%" height={250}>
-        <RadialBarChart
-          cx="50%"
-          cy="50%"
-          innerRadius="60%"
-          outerRadius="80%"
-          barSize={10}
-          data={chartData}
-          startAngle={90}
-          endAngle={-270}
-        >
-          <RadialBar
-            minAngle={15}
-            background
-            clockWise
+        <PieChart>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            innerRadius={70}
+            outerRadius={80}
+            startAngle={90}
+            endAngle={450}
             dataKey="value"
-          />
-        </RadialBarChart>
+          >
+            <Cell fill="#FF0000" />
+            <Cell fill="transparent" />
+          </Pie>
+        </PieChart>
       </ResponsiveContainer>
       <div className="score-label">
-        <span className="score-value">{Math.round(score)}%</span>
+        <span className="score-value">{score * 100}%</span>
         <span className="score-text">de votre objectif</span>
       </div>
     </div>
   );
 }
 
-// Validation des PropTypes
 ScoreChart.propTypes = {
-  userId: PropTypes.number.isRequired, 
+  score: PropTypes.number.isRequired,
 };
 
 export default ScoreChart;

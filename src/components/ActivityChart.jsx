@@ -1,11 +1,32 @@
-import { useState, useEffect } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, CartesianGrid } from 'recharts';
+import React from 'react';
 import PropTypes from 'prop-types';
-import '../styles/ActivityChart.css';
-import { fetchUserActivity } from '../services/api';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import '../styles/ActivityChart.css';  // Ensure the path is correct
+
+function ActivityChart({ data }) {
+  if (!data) return <div>Aucune donnée d'activité disponible</div>;
+
+  return (
+    <div className="activity-chart">
+      <h2>Activité quotidienne</h2>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <CartesianGrid strokeDasharray="3 3" vertical={false} />
+          <XAxis dataKey="day" tickLine={false} tick={{ fill: '#9B9EAC' }} dy={15} />
+          <YAxis yAxisId="left" orientation="right" tickLine={false} axisLine={false} tick={{ fill: '#9B9EAC' }} />
+          <YAxis yAxisId="right" orientation="right" tickLine={false} axisLine={false} hide />
+          <Tooltip content={<CustomTooltip />} />
+          <Legend verticalAlign="top" align="right" iconType="circle" height={50} />
+          <Bar yAxisId="left" dataKey="kilogram" name="Poids (kg)" fill="#282D30" barSize={7} radius={[3, 3, 0, 0]} />
+          <Bar yAxisId="right" dataKey="calories" name="Calories brûlées (kCal)" fill="#E60000" barSize={7} radius={[3, 3, 0, 0]} />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
 
 const CustomTooltip = ({ active, payload }) => {
-  if (active && payload && payload.length >= 2) {
+  if (active && payload?.length) {
     return (
       <div className="custom-tooltip">
         <p>{`${payload[0]?.value}kg`}</p>
@@ -18,51 +39,21 @@ const CustomTooltip = ({ active, payload }) => {
 
 CustomTooltip.propTypes = {
   active: PropTypes.bool,
-  payload: PropTypes.arrayOf(PropTypes.object),
+  payload: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.number,
+    })
+  ),
 };
 
-function ActivityChart({ userId }) {
-  const [activityData, setActivityData] = useState([]);
-
-  useEffect(() => {
-    const getUserActivity = async () => {
-      try {
-        const data = await fetchUserActivity(userId);
-        const formattedData = data.sessions.map((session, index) => ({
-          day: index + 1, // Vous pouvez formater le jour ici
-          weight: session.kilogram,
-          calories: session.calories,
-        }));
-        setActivityData(formattedData);
-      } catch (error) {
-        console.error("Error fetching user activity:", error);
-      }
-    };
-
-    getUserActivity();
-  }, [userId]);
-
-  return (
-    <div className="activity-chart">
-      <h3>Activité quotidienne</h3>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={activityData} barGap={8} barCategoryGap="35%">
-          <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <XAxis dataKey="day" tickLine={false} tick={{ fontSize: 14 }} dy={15} />
-          <YAxis yAxisId="left" orientation="right" tickLine={false} axisLine={false} tick={{ fontSize: 14 }} dx={15} />
-          <YAxis yAxisId="right" orientation="left" tickLine={false} axisLine={false} hide={true} />
-          <Tooltip content={<CustomTooltip />} />
-          <Legend verticalAlign="top" align="right" iconType="circle" wrapperStyle={{ paddingBottom: '15px' }} />
-          <Bar yAxisId="left" dataKey="weight" fill="#282D30" barSize={7} radius={[50, 50, 0, 0]} name="Poids (kg)" />
-          <Bar yAxisId="right" dataKey="calories" fill="#E60000" barSize={7} radius={[50, 50, 0, 0]} name="Calories brûlées (kCal)" />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  );
-}
-
 ActivityChart.propTypes = {
-  userId: PropTypes.number.isRequired,
+  data: PropTypes.arrayOf(
+    PropTypes.shape({
+      day: PropTypes.string,
+      kilogram: PropTypes.number,
+      calories: PropTypes.number,
+    })
+  ).isRequired,
 };
 
 export default ActivityChart;

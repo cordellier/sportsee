@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { fetchUserData, fetchUserActivity, fetchUserAverageSessions, fetchUserPerformance } from '../services/api';
 import ActivityChart from './ActivityChart';
 import AverageSessionsChart from './AverageSessionsChart';
@@ -9,62 +9,62 @@ import '../styles/Dashboard.css';
 
 function Dashboard() {
   const [userData, setUserData] = useState(null);
-  const [userActivity, setUserActivity] = useState(null);
-  const [userAverageSessions, setUserAverageSessions] = useState(null);
-  const [userPerformance, setUserPerformance] = useState(null);
+  const [activityData, setActivityData] = useState(null);
+  const [averageSessionsData, setAverageSessionsData] = useState(null);
+  const [performanceData, setPerformanceData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState({});
+  const userId = 12;
 
   useEffect(() => {
-    const userId = 12;
-    
-    const fetchData = async () => {
+    const fetchAllData = async () => {
+      setLoading(true);
+      setErrors({});
       try {
-        const data = await fetchUserData(userId);
-        const activity = await fetchUserActivity(userId);
-        const averageSessions = await fetchUserAverageSessions(userId);
-        const performance = await fetchUserPerformance(userId);
-
-        setUserData(data);
-        setUserActivity(activity);
-        setUserAverageSessions(averageSessions);
-        setUserPerformance(performance);
+        const [user, activity, averageSessions, performance] = await Promise.all([
+          fetchUserData(userId),
+          fetchUserActivity(userId),
+          fetchUserAverageSessions(userId),
+          fetchUserPerformance(userId)
+        ]);
+        setUserData(user.data);
+        setActivityData(activity.data);
+        setAverageSessionsData(averageSessions.data);
+        setPerformanceData(performance.data);
       } catch (error) {
-        setError('Error fetching data');
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
+        setErrors({ general: "Une erreur est survenue lors du chargement des données" });
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
-  }, []);
+    fetchAllData();
+  }, [userId]);
 
-  if (loading) return <div className="loading">Loading...</div>;
-  if (error) return <div className="error">{error}</div>;
-  if (!userData) return <div className="error">No data available</div>;
+  if (loading) return <div>Chargement...</div>;
+  if (errors.general) return <div>{errors.general}</div>;
 
   return (
     <div className="dashboard">
       <header className="dashboard-header">
-        <h1>Bonjour <span className="name">{userData.userInfos.firstName}</span></h1>
+        <h1>Bonjour <span className="name">{userData?.userInfos?.firstName || 'Utilisateur'}</span></h1>
         <p>Félicitations ! Vous avez explosé vos objectifs hier 👏</p>
       </header>
-      
       <div className="dashboard-content">
         <div className="charts-container">
-          {userActivity && <ActivityChart data={userActivity.sessions} />}
+          <ActivityChart data={activityData?.sessions} />
           <div className="small-charts-container">
-            {userAverageSessions && <AverageSessionsChart data={userAverageSessions.sessions} />}
-            {userPerformance && <PerformanceChart data={userPerformance.data} />}
-            <ScoreChart score={userData.score || userData.todayScore} />
+            <AverageSessionsChart data={averageSessionsData?.sessions} />
+            <PerformanceChart data={performanceData?.data} kind={performanceData?.kind} />
+            <ScoreChart score={userData?.todayScore || userData?.score} />
           </div>
         </div>
         <div className="nutrition-container">
-          <NutritionCard type="calories" value={userData.keyData.calorieCount} unit="kCal" />
-          <NutritionCard type="proteines" value={userData.keyData.proteinCount} unit="g" />
-          <NutritionCard type="glucides" value={userData.keyData.carbohydrateCount} unit="g" />
-          <NutritionCard type="lipides" value={userData.keyData.lipidCount} unit="g" />
+          <NutritionCard type="calories" value={userData?.keyData?.calorieCount} unit="kCal" />
+          <NutritionCard type="proteines" value={userData?.keyData?.proteinCount} unit="g" />
+          <NutritionCard type="glucides" value={userData?.keyData?.carbohydrateCount} unit="g" />
+          <NutritionCard type="lipides" value={userData?.keyData?.lipidCount} unit="g" />
         </div>
       </div>
     </div>

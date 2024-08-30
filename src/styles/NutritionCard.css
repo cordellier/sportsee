@@ -4,14 +4,19 @@
   background-color: #f7f6f6;
   padding: 1rem;
   border-radius: 5px;
-  width: 180px;
+  width: 258px;
+  height: 124px;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+.nutrition-card img {
+  margin-left: 30px;
+}
+
 .nutrition-icon {
-  width: 50px;
-  height: 50px;
-  margin-right: 1.2rem;
+  width: 60px;
+  height: 60px;
+  margin-right: 30px;
 }
 
 .nutrition-info {
@@ -22,7 +27,7 @@
 
 .nutrition-value {
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 20px;
   margin: 0;
   color: #282D30;
 }
