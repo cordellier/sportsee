@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import '../styles/ActivityChart.css';  // Ensure the path is correct
+import '../styles/ActivityChart.css';
 
 function ActivityChart({ data }) {
   if (!data) return <div>Aucune donnée d'activité disponible</div>;

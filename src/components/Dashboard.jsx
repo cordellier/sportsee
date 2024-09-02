@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchUserData, fetchUserActivity, fetchUserAverageSessions, fetchUserPerformance } from '../services/api';
+import { fetchUserData, fetchUserActivity, fetchUserAverageSessions, fetchUserPerformance } from '@services/api';
 import ActivityChart from './ActivityChart';
 import AverageSessionsChart from './AverageSessionsChart';
 import PerformanceChart from './PerformanceChart';

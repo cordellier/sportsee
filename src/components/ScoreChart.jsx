@@ -36,8 +36,4 @@ function ScoreChart({ score }) {
   );
 }
 
-ScoreChart.propTypes = {
-  score: PropTypes.number.isRequired,
-};
-
 export default ScoreChart;
