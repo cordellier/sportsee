@@ -6,13 +6,24 @@ import '../styles/ActivityChart.css';
 function ActivityChart({ data }) {
   if (!data) return <div>Aucune donnée d'activité disponible</div>;
 
+    const formatXAxis = (tickItem) => {
+      const date = new Date(tickItem);
+      return date.getDate().toString();
+    };
+
   return (
     <div className="activity-chart">
       <h2>Activité quotidienne</h2>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <XAxis dataKey="day" tickLine={false} tick={{ fill: '#9B9EAC' }} dy={15} />
+          <XAxis 
+            dataKey="day" 
+            tickLine={false} 
+            tick={{ fill: '#9B9EAC' }} 
+            dy={15}
+            tickFormatter={formatXAxis} // Utilisation de la nouvelle fonction de formatage
+          />
           <YAxis yAxisId="left" orientation="right" tickLine={false} axisLine={false} tick={{ fill: '#9B9EAC' }} />
           <YAxis yAxisId="right" orientation="right" tickLine={false} axisLine={false} hide />
           <Tooltip content={<CustomTooltip />} />

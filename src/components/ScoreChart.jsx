@@ -14,6 +14,14 @@ function ScoreChart({ score }) {
       <ResponsiveContainer width="100%" height={250}>
         <PieChart>
           <Pie
+            data={[{ value: 1 }]}
+            cx="50%"
+            cy="50%"
+            innerRadius={0}
+            outerRadius={80}
+            fill="#FFFFFF"
+          />
+          <Pie
             data={data}
             cx="50%"
             cy="50%"
@@ -30,7 +38,7 @@ function ScoreChart({ score }) {
       </ResponsiveContainer>
       <div className="score-label">
         <span className="score-value">{score * 100}%</span>
-        <span className="score-text">de votre objectif</span>
+        <span className="score-text">de votre<br/>objectif</span>
       </div>
     </div>
   );
