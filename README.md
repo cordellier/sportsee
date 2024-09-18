@@ -41,7 +41,7 @@ yarn dev
 
 Le projet permet de basculer facilement entre les **données simulées** et les **données réelles** de l'API. Voici comment faire :
 
-### Pour utiliser les données sur simulées 🧪 :
+### Pour utiliser les données simulées 🧪 :
 
 1. Ouvrez le fichier `./src/config.js`.
 2. Modifiez la ligne suivante pour qu'elle soit définie sur `true` :
